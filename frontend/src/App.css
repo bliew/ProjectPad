@@ -1,0 +1,10 @@
+/* index.css or main.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: white;
+  color: black;
+  font-family: sans-serif;
+}
