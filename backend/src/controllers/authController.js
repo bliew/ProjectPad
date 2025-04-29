@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { generateToken } from '../utils/jwtUtils';
+import prisma from './libs/prisma.js';
 
 const mockUser = {
   id: '123',
