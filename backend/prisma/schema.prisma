@@ -14,20 +14,20 @@ datasource db {
 }
 
 model User{
-  id  Int @id @default(autoincrement())
+  id  String @id @default(cuid())
   username String @unique
   password String
 }
 
 model Project{
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
   title String
   description String?
   tasks Task[]
 }
 
 model Task{
-  id Int @id @default(autoincrement())
-  projectId Int
+  id String @id @default(cuid())
+  projectId String
   project Project @relation(fields:[projectId],references: [id])
 }
