@@ -1,11 +1,29 @@
 import { useEffect, useState } from 'react';
-import Login from './components/Login';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 
 function App() {
+  const [username, setUsername] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
-    <div>
-      <Login />
-    </div>
+    <>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={<Login username={username} setUsername={setUsername} />}
+          />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={<Dashboard username={username} />}
+          />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

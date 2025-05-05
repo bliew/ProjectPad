@@ -1,23 +1,67 @@
-import jwt from 'jsonwebtoken';
-import { generateToken } from '../utils/jwtUtils';
-import prisma from './libs/prisma.js';
+import { generateToken } from '../utils/jwtUtils.js';
+import prisma from '../libs/prisma.js';
+import bcrypt from 'bcrypt';
 
-const mockUser = {
-  id: '123',
-  username: 'testuser',
-  password: 'password123',
-};
-
-export const login = (req, res) => {
+export const login = async (req, res) => {
   const { username, password } = req.body;
 
-  if (username === mockUser.username && password === mockUser.password) {
-    const token = generateToken(mockUser);
-    return res.json({
-      message: 'Login successful',
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    const token = generateToken(user);
+    return res.status(200).json({ message: 'Login successful', token });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: 'Internal server error: Error logging in' });
+  }
+};
+
+export const registerUser = async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const userExists = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    console.log('userExists', userExists);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        password: hashedPassword,
+      },
+    });
+
+    const token = generateToken(newUser);
+
+    return res.status(201).json({
+      message: 'User successfully registered',
       token,
     });
-  } else {
-    return res.status(401).json({ message: 'Invalid username or password' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: 'Internal Server Error: Error registering user' });
   }
 };
