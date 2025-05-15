@@ -5,8 +5,11 @@ import {
   getProject,
   getProjects,
 } from '../controllers/projectController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
+router.use(protect);
 
 router.post('/', createProject);
 router.put('/:id', updateProject);

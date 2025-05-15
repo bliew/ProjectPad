@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
-import protectedRoutes from './routes/protectedRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 
 const app = express();
@@ -11,7 +11,7 @@ app.use(express.json());
 
 //Routes
 app.use('/api/auth', authRoutes);
-app.use('/api', protectedRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/projects', projectRoutes);
 
 app.get('/', (req, res) => {

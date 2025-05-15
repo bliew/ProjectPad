@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
-function Login({ username, setUsername }) {
-  // const [username, setUsername] = useState('');
+function Login() {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -32,7 +32,9 @@ function Login({ username, setUsername }) {
         throw new Error('Login failed');
       }
       const data = await response.json();
-      console.log(`Login Successful, token:${data.token}`);
+      //TODO: make this more secure (ex: httponly cookies?)
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', username);
       navigate('/dashboard');
     } catch (error) {
       setError(error.message || 'Error logging in');
@@ -43,7 +45,7 @@ function Login({ username, setUsername }) {
     <div className="flex items-center justify-center h-screen	bg-green-50">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96">
         <h2 className="text-2xl font-bold text-center mb-6">
-          ProjectPad Login
+          🍄 ProjectPad Login 🍄
         </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleLogin}>
@@ -87,6 +89,12 @@ function Login({ username, setUsername }) {
           >
             Login
           </button>
+          <p className="p-2">
+            Not registered yet?
+            <Link to="/register" className="text-blue-600 p-2 text-sm">
+              Create your account
+            </Link>
+          </p>
         </form>
       </div>
     </div>

@@ -6,36 +6,114 @@ import {
   DialogActions,
   Button,
   TextField,
+  IconButton,
 } from '@mui/material';
+import { Add, Delete } from '@mui/icons-material';
 
 function ProjectDialog({ open, onClose, onCreate }) {
-  const [projectName, setProjectName] = useState('');
-  //const [projectDescription, setProjectDescription] = useState('');
+  const [projectDetails, setProjectDetails] = useState({
+    title: '',
+    description: '',
+    tasks: [],
+  });
 
   const handleCreate = () => {
-    if (projectName.Name.trim()) {
-      onCreate(projectname);
-      setProjectName('');
+    if (projectDetails) {
+      onCreate(projectDetails);
+      setProjectDetails({
+        title: '',
+        description: '',
+        tasks: [],
+      });
       onClose();
     }
   };
 
+  function handleUpdateTask(index, value) {
+    const updatedTasks = [...projectDetails.tasks];
+    updatedTasks[index] = value;
+    setProjectDetails((prev) => ({ ...prev, tasks: updatedTasks }));
+  }
+
+  function handleDeleteTask(index) {
+    const updatedTasks = projectDetails.tasks.filter((task, i) => i !== index);
+    setProjectDetails((prev) => ({ ...prev, tasks: updatedTasks }));
+  }
+
+  function handleAddTask() {
+    setProjectDetails((prev) => ({ ...prev, tasks: [...prev.tasks, ''] }));
+  }
+
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Create New Project</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      sx={{
+        '& .MuiDialog-paper': {
+          borderRadius: '16px',
+          padding: '16px',
+          backgroundColor: '#f0fdf4',
+        },
+      }}
+    >
+      <DialogTitle className="text-emerald-800 font-semibold">
+        Create New Project
+      </DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
-          label="Project name"
+          label="Project Title"
           fullWidth
-          variant={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
+          variant="outlined"
+          value={projectDetails.title}
+          onChange={(e) =>
+            setProjectDetails((prev) => ({ ...prev, title: e.target.value }))
+          }
         />
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Project Description"
+          fullWidth
+          variant="outlined"
+          value={projectDetails.description}
+          onChange={(e) =>
+            setProjectDetails((prev) => ({
+              ...prev,
+              description: e.target.value,
+            }))
+          }
+        />
+        <div className="mt-4 outline-dashed outline-emerald-700 outline-1 p-2">
+          <h4 className="text-emerald-700 font-semibold mb-2">Tasks</h4>
+          {projectDetails.tasks.map((task, index) => (
+            <div key={index} className="flex gap-2 mb-2">
+              <TextField
+                fullWidth
+                variant="outlined"
+                value={task}
+                onChange={(e) => handleUpdateTask(index, e.target.value)}
+              />
+              <IconButton onClick={() => handleDeleteTask(index)} color="error">
+                <Delete />
+              </IconButton>
+            </div>
+          ))}
+          <Button
+            onClick={handleAddTask}
+            startIcon={<Add />}
+            variant="outlined"
+            color="primary"
+            size="small"
+          >
+            Add Task
+          </Button>
+        </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClicke={onCreate}>Create</Button>
+        <Button onClick={handleCreate}>Create</Button>
       </DialogActions>
     </Dialog>
   );

@@ -1,36 +1,74 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProjectCard from '../components/ProjectCard';
 import { useNavigate } from 'react-router-dom';
 import ProjectDialog from '../components/ProjectDialog';
+import { Button } from '@mui/material';
 
-function Dashboard({ username }) {
+function Dashboard() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const projects = [
-    {
-      id: 1,
-      title: 'Marketing Plan',
-      description: 'Outline for Q2 campaign',
-    },
-    {
-      id: 2,
-      title: 'Landing Page',
-      description: 'Redesign landing page for SEO',
-    },
-    {
-      id: 3,
-      title: 'Bug Fixes',
-      description: 'Resolve issues from user feedback',
-    },
-  ];
-
+  const [error, setError] = useState('');
+  const [projects, setProjects] = useState([]);
+  const [reloadProjects, setReloadProjects] = useState(false);
+  const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
+  const username = localStorage.getItem('username');
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const projects = await fetch('http://localhost:5000/api/projects', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log(projects);
+
+        if (projects.status !== 200) {
+          throw new Error('Failed to fetch projects');
+        }
+
+        const projectResponse = await projects.json();
+        setProjects(projectResponse);
+      } catch (error) {
+        setError(error.message || 'Error fetching projects');
+      }
+    };
+    fetchProjects();
+  }, [reloadProjects]);
+
   function handleLogout() {
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
     navigate('/');
   }
 
-  const handleCreateProject = (name) => {
-    console.log('Project created', name);
+  const handleCreateProject = async ({ title, description }) => {
+    const project = await fetch('http://localhost:5000/api/projects', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        description,
+      }),
+    });
+    if (!project) {
+      throw new Error('Error creating new project');
+    }
+    setReloadProjects((prev) => !prev);
   };
+
   return (
     <div className="p-6 bg-green-50 min-h-screen">
       <div className="flex items-center justify-between mb-8">
@@ -50,13 +88,14 @@ function Dashboard({ username }) {
         </button>
       </div>
       <h2 className="text-3xl font-bold text-emerald-800 mb-8">Projects</h2>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setDialogOpen(true)}
-      >
-        New Project
-      </Button>
+      <div className="flex justify-center mb-10">
+        <button
+          className="bg-emerald-400 hover:bd=emerald-500 text-white font-semibold px-6 py-2 rounded-full shadow-md transition-transform transform hover:scale-105"
+          onClick={() => setDialogOpen(true)}
+        >
+          ✨ Create New Project
+        </button>
+      </div>
       <ProjectDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}

@@ -14,10 +14,7 @@ export const createProject = async (req, res) => {
       });
     }
 
-    return res.status(201).json({
-      message: 'Project sucessfully created',
-      project: createdProject,
-    });
+    return res.status(201).json(createdProject);
   } catch (error) {
     console.error('Error creating project', error);
     return res.status(500).json({
@@ -40,9 +37,7 @@ export const getProject = async (req, res) => {
       });
     }
 
-    return res.status(200).json({
-      existingProject,
-    });
+    return res.status(200).json(existingProject);
   } catch (error) {
     console.log('Error getting project', error);
     return res.status(500).json({
@@ -55,9 +50,7 @@ export const getProjects = async (req, res) => {
   try {
     const projects = await prisma.project.findMany();
 
-    return res.status(200).json({
-      projects,
-    });
+    return res.status(200).json(projects);
   } catch (error) {
     console.log('Error getting projects', error);
     return res

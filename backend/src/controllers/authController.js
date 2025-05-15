@@ -5,13 +5,17 @@ import bcrypt from 'bcrypt';
 export const login = async (req, res) => {
   const { username, password } = req.body;
 
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Usename and Password required' });
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: { username },
     });
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -21,6 +25,7 @@ export const login = async (req, res) => {
     }
 
     const token = generateToken(user);
+
     return res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
     console.error(error);
@@ -32,6 +37,10 @@ export const login = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Missing fields' });
+  }
 
   try {
     const userExists = await prisma.user.findUnique({
