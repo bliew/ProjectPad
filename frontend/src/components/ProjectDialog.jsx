@@ -18,6 +18,7 @@ function ProjectDialog({ open, onClose, onCreate }) {
   });
 
   const handleCreate = () => {
+    console.log('projectDetails', projectDetails);
     if (projectDetails) {
       onCreate(projectDetails);
       setProjectDetails({

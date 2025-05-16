@@ -1,11 +1,20 @@
 import prisma from '../libs/prisma.js';
 
 export const createProject = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, tasks } = req.body;
 
   try {
     const createdProject = await prisma.project.create({
-      data: { title, description },
+      data: {
+        title,
+        description,
+        tasks: {
+          create: tasks.map((task) => ({
+            description: task,
+          })),
+        },
+      },
+      include: { tasks: true },
     });
 
     if (!title) {
@@ -29,6 +38,9 @@ export const getProject = async (req, res) => {
   try {
     const existingProject = await prisma.project.findUnique({
       where: { id },
+      include: {
+        tasks: true,
+      },
     });
 
     if (!existingProject) {
@@ -48,7 +60,11 @@ export const getProject = async (req, res) => {
 
 export const getProjects = async (req, res) => {
   try {
-    const projects = await prisma.project.findMany();
+    const projects = await prisma.project.findMany({
+      include: {
+        tasks: true,
+      },
+    });
 
     return res.status(200).json(projects);
   } catch (error) {

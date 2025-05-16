@@ -30,12 +30,9 @@ function Dashboard() {
           },
         });
 
-        console.log(projects);
-
         if (projects.status !== 200) {
           throw new Error('Failed to fetch projects');
         }
-
         const projectResponse = await projects.json();
         setProjects(projectResponse);
       } catch (error) {
@@ -51,7 +48,7 @@ function Dashboard() {
     navigate('/');
   }
 
-  const handleCreateProject = async ({ title, description }) => {
+  const handleCreateProject = async ({ title, description, tasks }) => {
     const project = await fetch('http://localhost:5000/api/projects', {
       method: 'POST',
       headers: {
@@ -61,6 +58,7 @@ function Dashboard() {
       body: JSON.stringify({
         title,
         description,
+        tasks,
       }),
     });
     if (!project) {
@@ -70,7 +68,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="p-6 bg-green-50 min-h-screen">
+    <div className="p-6 bg-green-50 min-h-screen overflow-auto">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-emerald-700 text-white rounded-full flex items-center justify-center text-lg font-bold">
@@ -107,6 +105,7 @@ function Dashboard() {
             key={project.id}
             title={project.title}
             description={project.description}
+            tasks={project.tasks}
           />
         ))}
       </div>
