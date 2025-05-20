@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import ProjectCard from '../components/ProjectCard';
 import { useNavigate } from 'react-router-dom';
 import ProjectDialog from '../components/ProjectDialog';
-import { Button } from '@mui/material';
+import DetailDialog from '../components/DetailDialog';
 
 function Dashboard() {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState({});
   const [error, setError] = useState('');
   const [projects, setProjects] = useState([]);
   const [reloadProjects, setReloadProjects] = useState(false);
@@ -67,6 +69,16 @@ function Dashboard() {
     setReloadProjects((prev) => !prev);
   };
 
+  const handleOpenDetailDialog = (project) => {
+    console.log(project);
+    setSelectedProject(project);
+    setDetailDialogOpen(true);
+  };
+
+  const handleUpdateProject = ({ title, description, tasks }) => {
+    console.log({ title, description, tasks });
+  };
+
   return (
     <div className="p-6 bg-green-50 min-h-screen overflow-auto">
       <div className="flex items-center justify-between mb-8">
@@ -89,14 +101,14 @@ function Dashboard() {
       <div className="flex justify-center mb-10">
         <button
           className="bg-emerald-400 hover:bd=emerald-500 text-white font-semibold px-6 py-2 rounded-full shadow-md transition-transform transform hover:scale-105"
-          onClick={() => setDialogOpen(true)}
+          onClick={() => setProjectDialogOpen(true)}
         >
           ✨ Create New Project
         </button>
       </div>
       <ProjectDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        open={projectDialogOpen}
+        onClose={() => setProjectDialogOpen(false)}
         onCreate={handleCreateProject}
       />
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
@@ -106,9 +118,16 @@ function Dashboard() {
             title={project.title}
             description={project.description}
             tasks={project.tasks}
+            openDetail={() => handleOpenDetailDialog(project)}
           />
         ))}
       </div>
+      <DetailDialog
+        selectedProject={selectedProject}
+        open={detailDialogOpen}
+        onClose={() => setDetailDialogOpen(false)}
+        onCreate={handleUpdateProject}
+      />
     </div>
   );
 }

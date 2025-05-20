@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -10,16 +10,29 @@ import {
 } from '@mui/material';
 import { Add, Delete } from '@mui/icons-material';
 
-function ProjectDialog({ open, onClose, onCreate }) {
+function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
+  const [project, setProject] = useState([]);
+  const [error, setError] = useState('');
   const [projectDetails, setProjectDetails] = useState({
     title: '',
     description: '',
     tasks: [],
   });
 
-  const handleCreate = () => {
+  useEffect(() => {
+    if (open && selectedProject) {
+      console.log(selectedProject);
+      setProjectDetails({
+        title: selectedProject.title || '',
+        description: selectedProject.description || '',
+        tasks: selectedProject.tasks || [],
+      });
+    }
+  }, [open, selectedProject]);
+
+  const handleSubmit = () => {
     if (projectDetails) {
-      onCreate(projectDetails);
+      onSubmit(projectDetails);
       setProjectDetails({
         title: '',
         description: '',
@@ -56,9 +69,7 @@ function ProjectDialog({ open, onClose, onCreate }) {
         },
       }}
     >
-      <DialogTitle className="text-emerald-800 font-semibold">
-        Create New Project
-      </DialogTitle>
+      <DialogTitle className="text-emerald-800 font-semibold"></DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -92,7 +103,7 @@ function ProjectDialog({ open, onClose, onCreate }) {
               <TextField
                 fullWidth
                 variant="outlined"
-                value={task}
+                value={task.description}
                 onChange={(e) => handleUpdateTask(index, e.target.value)}
               />
               <IconButton onClick={() => handleDeleteTask(index)} color="error">
@@ -113,10 +124,10 @@ function ProjectDialog({ open, onClose, onCreate }) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleCreate}>Create</Button>
+        <Button onClick={handleSubmit}>Create</Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-export default ProjectDialog;
+export default DetailDialog;
