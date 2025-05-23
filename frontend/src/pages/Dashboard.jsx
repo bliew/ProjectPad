@@ -75,8 +75,42 @@ function Dashboard() {
     setDetailDialogOpen(true);
   };
 
-  const handleUpdateProject = ({ title, description, tasks }) => {
-    console.log({ title, description, tasks });
+  const handleUpdateProject = async ({ id, title, description, tasks }) => {
+    const updatedProject = await fetch(
+      `http://localhost:5000/api/projects/${id}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          tasks,
+        }),
+      }
+    );
+    if (!updatedProject) {
+      throw new Error('Error updating project');
+    }
+    setReloadProjects((prev) => !prev);
+  };
+
+  const handleDeleteProject = async ({ id }) => {
+    const deletedProject = await fetch(
+      `http://localhost:5000/api/projects/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!deletedProject) {
+      throw new Error('Error deleted project');
+    }
+    setReloadProjects((prev) => !prev);
   };
 
   return (
@@ -115,10 +149,12 @@ function Dashboard() {
         {projects.map((project) => (
           <ProjectCard
             key={project.id}
+            id={project.id}
             title={project.title}
             description={project.description}
             tasks={project.tasks}
             openDetail={() => handleOpenDetailDialog(project)}
+            onDelete={(id) => handleDeleteProject({ id })}
           />
         ))}
       </div>
@@ -126,7 +162,7 @@ function Dashboard() {
         selectedProject={selectedProject}
         open={detailDialogOpen}
         onClose={() => setDetailDialogOpen(false)}
-        onCreate={handleUpdateProject}
+        onSubmit={handleUpdateProject}
       />
     </div>
   );

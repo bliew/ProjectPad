@@ -31,7 +31,10 @@ function ProjectDialog({ open, onClose, onCreate }) {
 
   function handleUpdateTask(index, value) {
     const updatedTasks = [...projectDetails.tasks];
-    updatedTasks[index] = value;
+    updatedTasks[index] = {
+      ...updatedTasks[index],
+      description: value,
+    };
     setProjectDetails((prev) => ({ ...prev, tasks: updatedTasks }));
   }
 
@@ -41,25 +44,44 @@ function ProjectDialog({ open, onClose, onCreate }) {
   }
 
   function handleAddTask() {
-    setProjectDetails((prev) => ({ ...prev, tasks: [...prev.tasks, ''] }));
+    setProjectDetails((prev) => ({
+      ...prev,
+      tasks: [...prev.tasks, { description: '' }],
+    }));
   }
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
+      fullWidth
+      maxWidth="sm"
       sx={{
         '& .MuiDialog-paper': {
-          borderRadius: '16px',
-          padding: '16px',
-          backgroundColor: '#f0fdf4',
+          borderRadius: '20px',
+          padding: '24px',
+          backgroundColor: '#fdf6f0',
+          fontFamily: `'Quicksand',sans-serif`,
         },
       }}
     >
-      <DialogTitle className="text-emerald-800 font-semibold">
-        Create New Project
+      <DialogTitle
+        sx={{
+          fontFamily: `'Quicksand', sans-serif`,
+          fontWeight: '900',
+          fontSize: '1rem',
+          color: '#64748B',
+        }}
+      >
+        🌱 Create New Project
       </DialogTitle>
-      <DialogContent>
+      <DialogContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
         <TextField
           autoFocus
           margin="dense"
@@ -70,6 +92,12 @@ function ProjectDialog({ open, onClose, onCreate }) {
           onChange={(e) =>
             setProjectDetails((prev) => ({ ...prev, title: e.target.value }))
           }
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '12px',
+              backgroundColor: '#fffdf7',
+            },
+          }}
         />
         <TextField
           autoFocus
@@ -84,16 +112,28 @@ function ProjectDialog({ open, onClose, onCreate }) {
               description: e.target.value,
             }))
           }
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '12px',
+              backgroundColor: '#fffdf7',
+            },
+          }}
         />
-        <div className="mt-4 outline-dashed outline-emerald-700 outline-1 p-2">
-          <h4 className="text-emerald-700 font-semibold mb-2">Tasks</h4>
+        <div className="mt-4 p-2">
+          <h4 className="text-slate-500 font-semibold mb-2">📔 Tasks</h4>
           {projectDetails.tasks.map((task, index) => (
             <div key={index} className="flex gap-2 mb-2">
               <TextField
                 fullWidth
                 variant="outlined"
-                value={task}
+                value={task.description}
                 onChange={(e) => handleUpdateTask(index, e.target.value)}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                    backgroundColor: '#fff0f5',
+                  },
+                }}
               />
               <IconButton onClick={() => handleDeleteTask(index)} color="error">
                 <Delete />

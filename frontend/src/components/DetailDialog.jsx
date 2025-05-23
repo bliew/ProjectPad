@@ -7,13 +7,13 @@ import {
   Button,
   TextField,
   IconButton,
+  Typography,
 } from '@mui/material';
 import { Add, Delete } from '@mui/icons-material';
 
 function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
-  const [project, setProject] = useState([]);
-  const [error, setError] = useState('');
   const [projectDetails, setProjectDetails] = useState({
+    id: '',
     title: '',
     description: '',
     tasks: [],
@@ -23,6 +23,7 @@ function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
     if (open && selectedProject) {
       console.log(selectedProject);
       setProjectDetails({
+        id: selectedProject.id,
         title: selectedProject.title || '',
         description: selectedProject.description || '',
         tasks: selectedProject.tasks || [],
@@ -34,6 +35,7 @@ function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
     if (projectDetails) {
       onSubmit(projectDetails);
       setProjectDetails({
+        id: '',
         title: '',
         description: '',
         tasks: [],
@@ -44,7 +46,10 @@ function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
 
   function handleUpdateTask(index, value) {
     const updatedTasks = [...projectDetails.tasks];
-    updatedTasks[index] = value;
+    updatedTasks[index] = {
+      ...updatedTasks[index],
+      description: value,
+    };
     setProjectDetails((prev) => ({ ...prev, tasks: updatedTasks }));
   }
 
@@ -54,39 +59,66 @@ function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
   }
 
   function handleAddTask() {
-    setProjectDetails((prev) => ({ ...prev, tasks: [...prev.tasks, ''] }));
+    setProjectDetails((prev) => ({
+      ...prev,
+      tasks: [...prev.tasks, { description: '' }],
+    }));
   }
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
+      fullWidth
+      maxWidth="sm"
       sx={{
         '& .MuiDialog-paper': {
-          borderRadius: '16px',
-          padding: '16px',
-          backgroundColor: '#f0fdf4',
+          borderRadius: '20px',
+          padding: '24px',
+          backgroundColor: '#fdf6f0',
+          fontFamily: `'Quicksand',sans-serif`,
         },
       }}
     >
-      <DialogTitle className="text-emerald-800 font-semibold"></DialogTitle>
-      <DialogContent>
+      <DialogTitle
+        sx={{
+          fontFamily: `'Quicksand', sans-serif`,
+          fontWeight: '900',
+          fontSize: '1rem',
+          color: '#64748B',
+        }}
+      >
+        🌱 Project Details
+      </DialogTitle>
+      <DialogContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
         <TextField
-          autoFocus
-          margin="dense"
           label="Project Title"
+          margin="dense"
           fullWidth
           variant="outlined"
           value={projectDetails.title}
           onChange={(e) =>
             setProjectDetails((prev) => ({ ...prev, title: e.target.value }))
           }
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '12px',
+              backgroundColor: '#fffdf7',
+            },
+          }}
         />
         <TextField
-          autoFocus
           margin="dense"
           label="Project Description"
           fullWidth
+          multiline
+          minRows={2}
           variant="outlined"
           value={projectDetails.description}
           onChange={(e) =>
@@ -95,9 +127,15 @@ function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
               description: e.target.value,
             }))
           }
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '12px',
+              backgroundColor: '#fffdf7',
+            },
+          }}
         />
-        <div className="mt-4 outline-dashed outline-emerald-700 outline-1 p-2">
-          <h4 className="text-emerald-700 font-semibold mb-2">Tasks</h4>
+        <div className="mt-4 p-2">
+          <h1 className="text-slate-500  font-semibold mb-2">📔 Tasks</h1>
           {projectDetails.tasks.map((task, index) => (
             <div key={index} className="flex gap-2 mb-2">
               <TextField
@@ -105,6 +143,12 @@ function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
                 variant="outlined"
                 value={task.description}
                 onChange={(e) => handleUpdateTask(index, e.target.value)}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                    backgroundColor: '#fff0f5',
+                  },
+                }}
               />
               <IconButton onClick={() => handleDeleteTask(index)} color="error">
                 <Delete />
@@ -124,7 +168,7 @@ function DetailDialog({ selectedProject, open, onClose, onSubmit }) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit}>Create</Button>
+        <Button onClick={handleSubmit}>Update</Button>
       </DialogActions>
     </Dialog>
   );

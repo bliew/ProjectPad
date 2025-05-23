@@ -9,9 +9,7 @@ export const createProject = async (req, res) => {
         title,
         description,
         tasks: {
-          create: tasks.map((task) => ({
-            description: task,
-          })),
+          create: tasks,
         },
       },
       include: { tasks: true },
@@ -77,7 +75,7 @@ export const getProjects = async (req, res) => {
 
 export const updateProject = async (req, res) => {
   const { id } = req.params;
-  const { title, description } = req.body;
+  const { title, description, tasks } = req.body;
 
   if (!id) {
     return res.status(400).json({
@@ -94,9 +92,22 @@ export const updateProject = async (req, res) => {
         message: `Project with ID ${id} not found`,
       });
     }
+
     const updatedProject = await prisma.project.update({
       where: { id },
-      data: { title, description },
+      data: {
+        title,
+        description,
+        tasks: {
+          deleteMany: {},
+          create: tasks.map((task) => ({
+            description: task.description,
+          })),
+        },
+      },
+      include: {
+        tasks: true,
+      },
     });
 
     return res.status(200).json({
@@ -108,5 +119,43 @@ export const updateProject = async (req, res) => {
     return res.status(500).json({
       message: 'Internal server error while updating project',
     });
+  }
+};
+
+export const deleteProject = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({
+      message: 'Project ID required',
+    });
+  }
+  try {
+    const existingProject = await prisma.project.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingProject) {
+      return res.status(404).json({
+        message: `Project with ID ${id} not found`,
+      });
+    }
+
+    await prisma.project.delete({
+      where: {
+        id,
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ message: `Project ${id} deleted successfully` });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: 'Internal server error while deleting project' });
   }
 };
