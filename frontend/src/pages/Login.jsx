@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-
+import Icon from 'react-icons-kit';
+import { EyeOff } from 'lucide-react';
+import { Eye } from 'lucide-react';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const handleToggle = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -66,7 +74,7 @@ function Login() {
               placeholder="Enter your username"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-600"
@@ -74,7 +82,7 @@ function Login() {
               Password
             </label>
             <input
-              type="text"
+              type={showPassword ? 'text' : 'password'}
               id="password"
               name="password"
               className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
@@ -82,6 +90,13 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
             />
+
+            <span
+              className="absolute right-3 top-9 cursor-pointer"
+              onClick={handleToggle}
+            >
+              {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+            </span>
           </div>
           <button
             type="submit"

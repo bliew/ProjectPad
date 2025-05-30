@@ -15,8 +15,10 @@
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.0.2",
     "@tailwindcss/postcss": "^4.1.4",
+    "lucide-react": "^0.511.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons-kit": "^2.0.0",
     "react-router-dom": "^6.30.0"
   },
   "devDependencies": {

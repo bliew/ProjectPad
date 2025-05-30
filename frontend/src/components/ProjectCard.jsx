@@ -1,4 +1,6 @@
 import TaskItem from './TaskItem';
+import { IconButton } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 
 function ProjectCard({ id, title, description, tasks, openDetail, onDelete }) {
   const handleDelete = (e) => {
@@ -13,14 +15,30 @@ function ProjectCard({ id, title, description, tasks, openDetail, onDelete }) {
   return (
     <div
       onClick={openDetail}
-      className="bg-[#f2f1e7] border-2 border-[#8b735b] rounded-xl shadow-[4px_4px_0px_0px_#8b735b] p-4 hover:shadow-[6px_6px_0px_0px_#8b735b] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 max-h-[300px] flex flex-col"
+      className="relative bg-[#f2f1e7] border-2 border-[#8b735b] rounded-xl shadow-[4px_4px_0px_0px_#8b735b] p-4 hover:shadow-[6px_6px_0px_0px_#8b735b] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 max-h-[300px] flex flex-col"
     >
-      <button
+      <IconButton
         onClick={handleDelete}
-        className="absolute top-2 right-2 text-sm text-red-500 hover-text-red-700 bg-white border-red-300 px-2 py-1 rounded"
+        sx={{
+          position: 'absolute',
+          top: 8,
+          right: 8,
+          backgroundColor: '#fff',
+          border: '1px solid #f8d7da',
+          borderRadius: '12px',
+          padding: '4px',
+          color: '#e57373',
+          '&:hover': {
+            color: '#d32f2f',
+            backgrounColor: '#fff5f5',
+          },
+          '& svg': {
+            fontSize: '20px',
+          },
+        }}
       >
-        Delete
-      </button>
+        <Delete />
+      </IconButton>
       <h3 className="text-lg font-bold text-[#4e5d3c] mb-2">🌲{title}</h3>
       <p className="text-sm text-[#5c5a4d]">{description}</p>
       {tasks.length > 0 && (
