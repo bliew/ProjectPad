@@ -57,7 +57,7 @@ function Dashboard() {
 
   const handleUpdateProject = async ({ id, title, description, tasks }) => {
     const updatedProject = await fetch(
-      `http://localhost:5000/api/projects/${id}`,
+      `https://projectpad-vnxa.onrender.com/api/projects/${id}`,
       {
         method: 'PUT',
         headers: {
@@ -79,7 +79,7 @@ function Dashboard() {
 
   const handleDeleteProject = async ({ id }) => {
     const deletedProject = await fetch(
-      `http://localhost:5000/api/projects/${id}`,
+      `https://projectpad-vnxa.onrender.com/api/projects/${id}`,
       {
         method: 'DELETE',
         headers: {

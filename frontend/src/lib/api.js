@@ -1,4 +1,4 @@
-const API_Base = 'http://localhost:5000/api';
+const API_Base = 'https://projectpad-vnxa.onrender.com';
 
 export async function getProjects(token) {
   const res = await fetch(`${API_Base}/projects`, {
