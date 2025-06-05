@@ -1,9 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import Icon from 'react-icons-kit';
-import { EyeOff } from 'lucide-react';
-import { Eye } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { EyeOff, Eye } from 'lucide-react';
+
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -91,12 +89,12 @@ function Login() {
               placeholder="Enter your password"
             />
 
-            <span
+            <button
               className="absolute right-3 top-9 cursor-pointer"
               onClick={handleToggle}
             >
               {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
-            </span>
+            </button>
           </div>
           <button
             type="submit"

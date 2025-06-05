@@ -3,15 +3,20 @@ import ProjectCard from '../components/ProjectCard';
 import { useNavigate } from 'react-router-dom';
 import ProjectDialog from '../components/ProjectDialog';
 import DetailDialog from '../components/DetailDialog';
+import { getProjects, createProject } from '../lib/api';
 
 function Dashboard() {
+  //Project Dialog
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  const [reloadProjects, setReloadProjects] = useState(false);
+  const [projects, setProjects] = useState([]);
+
+  //Detail Dialog
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState({});
+
   const [error, setError] = useState('');
-  const [projects, setProjects] = useState([]);
-  const [reloadProjects, setReloadProjects] = useState(false);
-  const [tasks, setTasks] = useState([]);
+
   const navigate = useNavigate();
   const username = localStorage.getItem('username');
   const token = localStorage.getItem('token');
@@ -25,18 +30,8 @@ function Dashboard() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projects = await fetch('http://localhost:5000/api/projects', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (projects.status !== 200) {
-          throw new Error('Failed to fetch projects');
-        }
-        const projectResponse = await projects.json();
-        setProjects(projectResponse);
+        const projects = await getProjects(token);
+        setProjects(projects);
       } catch (error) {
         setError(error.message || 'Error fetching projects');
       }
@@ -44,33 +39,18 @@ function Dashboard() {
     fetchProjects();
   }, [reloadProjects]);
 
-  function handleLogout() {
+  const handleLogout = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('token');
     navigate('/');
-  }
+  };
 
   const handleCreateProject = async ({ title, description, tasks }) => {
-    const project = await fetch('http://localhost:5000/api/projects', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title,
-        description,
-        tasks,
-      }),
-    });
-    if (!project) {
-      throw new Error('Error creating new project');
-    }
+    await createProject({ title, description, tasks }, token);
     setReloadProjects((prev) => !prev);
   };
 
   const handleOpenDetailDialog = (project) => {
-    console.log(project);
     setSelectedProject(project);
     setDetailDialogOpen(true);
   };

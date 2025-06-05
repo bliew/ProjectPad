@@ -1,6 +1,7 @@
 import prisma from '../libs/prisma.js';
 
 export const createProject = async (req, res) => {
+  const userId = req.user.id;
   const { title, description, tasks } = req.body;
 
   try {
@@ -8,6 +9,7 @@ export const createProject = async (req, res) => {
       data: {
         title,
         description,
+        userId,
         tasks: {
           create: tasks,
         },
@@ -31,11 +33,12 @@ export const createProject = async (req, res) => {
 };
 
 export const getProject = async (req, res) => {
+  const userId = req.user.id;
   const { id } = req.params;
 
   try {
     const existingProject = await prisma.project.findUnique({
-      where: { id },
+      where: { id, userId },
       include: {
         tasks: true,
       },
@@ -57,8 +60,10 @@ export const getProject = async (req, res) => {
 };
 
 export const getProjects = async (req, res) => {
+  const userId = req.user.id;
   try {
     const projects = await prisma.project.findMany({
+      where: { userId },
       include: {
         tasks: true,
       },

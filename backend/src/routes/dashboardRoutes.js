@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/dashboard', protect, (req, res) => {
   res.json({
-    mesage: `Welcome to your dashboard, ${req.body.username}`,
+    message: `Welcome to your dashboard, ${req.user.username}`,
   });
 });
 
