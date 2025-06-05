@@ -79,7 +79,7 @@ function Dashboard() {
 
   const handleDeleteProject = async ({ id }) => {
     const deletedProject = await fetch(
-      `https://projectpad-vnxa.onrender.co/api/projects/${id}`,
+      `https://projectpad-vnxa.onrender.com/api/projects/${id}`,
       {
         method: 'DELETE',
         headers: {
