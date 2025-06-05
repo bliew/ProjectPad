@@ -1,7 +1,7 @@
 const API_Base = 'https://projectpad-vnxa.onrender.com';
 
 export async function getProjects(token) {
-  const res = await fetch(`${API_Base}/projects`, {
+  const res = await fetch(`${API_Base}/api/projects`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -13,7 +13,7 @@ export async function getProjects(token) {
 }
 
 export async function createProject(data, token) {
-  const res = await fetch(`${API_Base}/projects`, {
+  const res = await fetch(`${API_Base}/api/projects`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
